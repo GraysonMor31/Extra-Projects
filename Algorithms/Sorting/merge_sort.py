@@ -37,6 +37,7 @@ def merge_sort(arr):
         if left[i] < right[j]:
             merged_arr.append(left[i])
             i += 1
+        # If the element in the right half is smaller, add it to the merged array
         elif left[i] > right[j]:
             merged_arr.append(right[j])
             j += 1
