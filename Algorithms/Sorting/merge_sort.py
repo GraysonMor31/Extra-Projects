@@ -19,7 +19,7 @@ def is_sorted(arr):
     return True
 
 def merge_sort(arr):
-    if len(arr) == 0 or len(arr) == 1:
+    if len(arr) <= 1:
         return arr
     # Divide the array into two halves
     half = len(arr) // 2
@@ -33,22 +33,20 @@ def merge_sort(arr):
     i = j = 0
     # Loop until both halves are empty
     while i < len(left) and j < len(right):
-        # If the element in the left half is smaller, add it to the merged array
-        if left[i] < right[j]:
+        # If the element in the left half is smaller or equal, add it to the merged array
+        if left[i] <= right[j]:
             merged_arr.append(left[i])
             i += 1
         # If the element in the right half is smaller, add it to the merged array
-        elif left[i] > right[j]:
+        else:
             merged_arr.append(right[j])
             j += 1
     # Add remaining left half elements to the merged array
     while i < len(left):
-        # If the element in the left half is smaller, add it to the merged array
         merged_arr.append(left[i])
         i += 1
     # Add remaining right half elements to the merged array
     while j < len(right):
-        # If the element in the right half is smaller, add it to the merged array
         merged_arr.append(right[j])
         j += 1
     return merged_arr
