@@ -27,3 +27,4 @@ def bogo_sort(arr):
 if __name__ == "__main__":
     arr = [1, 11, 14, 297, 13, 15, 17, 12, 11, 6, 298, 36, 2, 9]
     print(bogo_sort(arr))
+    print(is_sorted(arr))
