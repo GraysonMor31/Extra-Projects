@@ -1,16 +1,15 @@
 """
 Bogo Sort Algorithm
 -------------------
-Worst Case Performance: O(∞)
-Best Case Performance: O(n)
-Average Performance: O(n*n!)
-Space Complexity: O(1)
-Algorithm Paradigm: Brute Force (Permutation)
-Sorting In Place: Yes
+Time complexity:
+    Best: O(n)
+    Average: O((n+1)!)
+    Worst: O((n+1)!)
+Space complexity: O(1)
 Stable: No
-Description: Bogo sort is a highly inefficient sorting algorithm based on the generate and test paradigm. The function successively generates permutations 
-of its input until it finds one that is sorted. It is not useful for sorting, but may be used for educational purposes, to contrast it with other more 
-realistic algorithms.
+In-place: Yes
+Description: Shuffle the array until it is sorted using random permutations. This works as a Generate and Test algorithm meaning it works off of statisical 
+probability, and is very inefficient, but theoretically possible to be faster than quicksort.
 """
 import random
 
