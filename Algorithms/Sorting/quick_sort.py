@@ -35,9 +35,9 @@ def partition(arr, low, high):
 
 def quick_sort(arr, low, high):
     if low < high:
-        # partition the array and get the index of the pivot
+        # partition the array and get the index of the pivot element
         pivot = partition(arr, low, high)
-        # recursively call quick_sort on the left and right sides of the pivot
+        # recursively call quick_sort on the left and right sides of the pivot until subarrays of size 1 are reached
         quick_sort(arr, low, pivot-1)
         quick_sort(arr, pivot+1, high)
     return arr
