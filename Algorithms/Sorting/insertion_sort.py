@@ -24,7 +24,7 @@ def insertion_sort(arr):
         key = arr[i]
         # Start comparing the current element with the elements before it
         j = i-1
-        # Shift the elements to the right to make room for the new element
+        # Loop as long as J is greater than or equal to 0 and the current element is less than the element before it
         while j >= 0 and key < arr[j]:
             # Shift the elements to the right to make room for the new element
             arr[j+1] = arr[j] 

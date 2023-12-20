@@ -9,7 +9,7 @@ Space complexity: O(1)
 Stable: No
 In-place: Yes
 Description: Create a heap data structure and repeatedly remove the largest element from the heap and add it to the sorted array. This is an efficient sorting 
-algorithm, but is not stable, due to the nature of the heap data structure.
+algorithm, but is not stable, due to the nature of the heap data structure. Numbers with same values will not necessarily remain in the same order.
 """
 
 def is_sorted(arr):
