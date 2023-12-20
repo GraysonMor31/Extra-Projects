@@ -1,10 +1,6 @@
 package Algorithms.Graphs;
 
-import java.util.*;
-import java.lang.*;
-import java.io.*;
-
-public class ShortestPath {
+class ShortestPath {
     static final int V = 9;
     int minDistance(int dist[], Boolean sptSet[]) {
         int min = Integer.MAX_VALUE, min_index = -1;
@@ -80,8 +76,11 @@ public class ShortestPath {
                                       { 0, 0, 0, 0, 0, 2, 0, 1, 6 }, 
                                       { 8, 11, 0, 0, 0, 0, 1, 0, 7 }, 
                                       { 0, 0, 2, 0, 0, 0, 6, 7, 0 } }; 
-        ShortestPath t = new ShortestPath(); 
+        ShortestPath t = new ShortestPath();
+        System.out.println("Dijkstra's Algorithm: ");; 
         t.dijkstra(graph, 0);
+        System.out.println();
+        System.out.println("Bellman-Ford Algorithm: ");
         t.bellmanFord(graph, 0);
     }
 }
