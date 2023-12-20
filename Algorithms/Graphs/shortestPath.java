@@ -1,117 +1,87 @@
 package Algorithms.Graphs;
 
 import java.util.*;
+import java.lang.*;
+import java.io.*;
 
-public class ShortestPath<T> {
-    private Map<Integer, List<Integer>> adjVertices;
-
-    public ShortestPath() {
-        this.adjVertices = new HashMap<>();
+public class ShortestPath {
+    static final int V = 9;
+    int minDistance(int dist[], Boolean sptSet[]) {
+        int min = Integer.MAX_VALUE, min_index = -1;
+        for(int v = 0; v < V; ++v) {
+            if(sptSet[v] == false && dist[v] <= min) {
+                min = dist[v];
+                min_index = v;
+            }
+        }
+        return min_index;
     }
 
-    public void addVertex(int vertex) {
-        adjVertices.putIfAbsent(vertex, new ArrayList<>());
-    }
-
-    public void addEdge(int src, int dest) {
-        adjVertices.get(src).add(dest);
-    }
-
-    public int getWeight(int src, int dest) {
-        return adjVertices.get(src).stream().filter(edge -> edge.dest == dest).findFirst().get().weight;
-    }
-
-    private static class Edge {
-        int dest;
-        int weight;
-        public Edge(int dest, int weight) {
-            this.dest = dest;
-            this.weight = weight;
+    void printSolution(int dist[]) {
+        System.out.println("Vertex \t\t Distance from Source");
+        for(int i = 0; i < V; ++i) {
+            System.out.println(i + " \t\t " + dist[i]);
         }
     }
-
-    /*  Dijkstra's Algorithm
-     * ----------------------
-     * Space Complexity: O(V)
-     * Time Complexity: O(E + VlogV)
-     * Finds the shortest path from a source vertex to all other vertices in a weighted graph. Cannot detect negative
-     * weight cycles. 
-     */
-    public void dijkstra(int start) {
-        int [] dist = new int[adjVertices.size()];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[start] = 0;
-
-        PriorityQueue<Integer> pq = new PriorityQueue<>((a, b) -> dist[a] - dist[b]);
-        pq.add(start);
-
-        while (!pq.isEmpty()) {
-            int u = pq.poll();
-            for (int v: adjVertices.get(u)) {
-                if (dist[v] > dist[u] + 1) {
-                    dist[v] = dist[u] + 1;
-                    pq.add(v);
+    
+    void dijkstra(int graph[][], int src) {
+        int dist[] = new int[V];
+        Boolean sptSet[] = new Boolean[V];
+        for(int i = 0; i < V; ++i) {
+            dist[i] = Integer.MAX_VALUE;
+            sptSet[i] = false;
+        }
+        dist[src] = 0;
+        for(int count = 0; count < V - 1; ++count) {
+            int u = minDistance(dist, sptSet);
+            sptSet[u] = true;
+            for(int v = 0; v < V; ++v) {
+                if(!sptSet[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v]) {
+                    dist[v] = dist[u] + graph[u][v];
                 }
             }
         }
+        printSolution(dist);
     }
 
-    /*  Bellman-Ford Algorithm 
-     * -----------------------
-     * Space Complexity: O(V)
-     * Time Complexity: O(VE)
-     * Finds the shortest path from a source vertex to all other vertices in a weighted graph. Can detect negative
-     * weight cycles. 
-     */
-    public void bellmanFord(int start) {
-        int [] dist = new int[adjVertices.size()];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[start] = 0;
-
-        for (int i=0; i<adjVertices.size()-1; ++i) {
-            for (int vertex=0; vertex<adjVertices.size(); ++vertex) {
-                for (int neighbor : adjVertices.get(vertex)) {
-                    int newDist = dist[vertex] + getWeight(vertex, neighbor);
-                    if (dist[neighbor] > newDist) {
-                        dist[neighbor] = newDist;
+    void bellmanFord(int graph[][], int src) {
+        int dist[] = new int[V];
+        for(int i = 0; i < V; ++i) {
+            dist[i] = Integer.MAX_VALUE;
+        }
+        dist[src] = 0;
+        for(int i = 1; i < V; ++i) {
+            for(int u = 0; u < V; ++u) {
+                for(int v = 0; v < V; ++v) {
+                    if(graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v]) {
+                        dist[v] = dist[u] + graph[u][v];
                     }
                 }
             }
         }
-        // Check for negative weight cycles
-        for (int vertex=0; vertex<adjVertices.size(); ++vertex) {
-            for (int neighbor : adjVertices.get(vertex)) {
-                int newDist = dist[vertex] + getWeight(vertex, neighbor);
-                if (dist[neighbor] > newDist) {
-                    System.out.println("Negative weight cycle detected");
+        for(int u = 0; u < V; ++u) {
+            for(int v = 0; v < V; ++v) {
+                if(graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v]) {
+                    System.out.println("Graph contains negative weight cycle");
                     return;
                 }
             }
         }
+        printSolution(dist);
     }
 
-
     public static void main(String[] args) {
-        ShortestPath<Integer> g = new ShortestPath<>();
-        g.addVertex(1);
-        g.addVertex(2);
-        g.addVertex(3);
-        g.addVertex(4);
-        g.addEdge(1, 2);
-        g.addEdge(2, 3);
-        g.addEdge(3, 1);
-        g.addEdge(4, 4);
-        g.dijkstra(2);
-        System.out.println();
-        ShortestPath<Integer> g2 = new ShortestPath<>();
-        // Add negative weight cycle
-        g2.addVertex(1);
-        g2.addVertex(2);
-        g2.addVertex(3);
-        g2.addEdge(1, 2);
-        g2.addEdge(2, 3);
-        g2.addEdge(3, 1);
-        g2.bellmanFord(1);
-        System.out.println();
+        int graph[][] = new int[][] { { 0, 4, 0, 0, 0, 0, 0, 8, 0 }, 
+                                      { 4, 0, 8, 0, 0, 0, 0, 11, 0 }, 
+                                      { 0, 8, 0, 7, 0, 4, 0, 0, 2 }, 
+                                      { 0, 0, 7, 0, 9, 14, 0, 0, 0 }, 
+                                      { 0, 0, 0, 9, 0, 10, 0, 0, 0 }, 
+                                      { 0, 0, 4, 14, 10, 0, 2, 0, 0 }, 
+                                      { 0, 0, 0, 0, 0, 2, 0, 1, 6 }, 
+                                      { 8, 11, 0, 0, 0, 0, 1, 0, 7 }, 
+                                      { 0, 0, 2, 0, 0, 0, 6, 7, 0 } }; 
+        ShortestPath t = new ShortestPath(); 
+        t.dijkstra(graph, 0);
+        t.bellmanFord(graph, 0);
     }
 }
