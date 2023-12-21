@@ -2,13 +2,14 @@
 #include <typeinfo>
 #include <cmath>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
-string printVector(const Vector<int>& v) {
+string print_vector_int(const Vector<int>& v) {
     string s = "[";
     for (int i = 0; i < v.size(); i++) {
-        s += to_string(v[i]);
+        s += to_string(v.at(i));
         if (i != v.size() - 1) {
             s += ", ";
         }
@@ -17,296 +18,115 @@ string printVector(const Vector<int>& v) {
     return s;
 }
 
-int vectorSum(const Vector<int>& v) {
+string print_vector_double(const Vector<double>& v) {
+    string s = "[";
+    for (int i = 0; i < v.size(); i++) {
+        s += to_string(v.at(i));
+        if (i != v.size() - 1) {
+            s += ", ";
+        }
+    }
+    s += "]";
+    return s;
+}
+
+string print_vector_string(const Vector<string>& v) {
+    string s = "[";
+    for (int i = 0; i < v.size(); i++) {
+        s += v.at(i);
+        if (i != v.size() - 1) {
+            s += ", ";
+        }
+    }
+    s += "]";
+    return s;
+}
+
+int sort_vector(Vector<int>& v) {
+    for (int i = 0; i < v.size(); i++) {
+        for (int j = i + 1; j < v.size(); j++) {
+            if (v.at(i) > v.at(j)) {
+                int temp = v.at(i);
+                v.at(i) = v.at(j);
+                v.at(j) = temp;
+            }
+        }
+    }
+}
+
+int sum_vector(const Vector<int>& v) {
     int sum = 0;
     for (int i = 0; i < v.size(); i++) {
-        sum += v[i];
+        sum += v.at(i);
     }
-    return sum;
 }
 
-int vectorAverage(const Vector<int>& v) {
-    return vectorSum(v) / v.size();
+int avg_vector(const Vector<int>& v) {
+    return sum_vector(v) / v.size();
 }
 
-int vectorMedian(const Vector<int>& v) {
-    Vector<int> copy = v;
-    sort(copy.begin(), copy.end());
-    return copy[copy.size() / 2];
-}
-
-int vectorMode(const Vector<int>& v) {
-    Vector<int> copy = v;
-    sort(copy.begin(), copy.end());
-    int mode = copy[0];
-    int mode_count = 1;
-    int current = copy[0];
-    int current_count = 1;
-    for (int i = 1; i < copy.size(); i++) {
-        if (copy[i] == current) {
-            current_count++;
-        }
-        else {
-            if (current_count > mode_count) {
-                mode = current;
-                mode_count = current_count;
-            }
-            current = copy[i];
-            current_count = 1;
-        }
+int median_vector(const Vector<int>& v) {
+    Vector<int> v_copy = v;
+    sort_vector(v_copy);
+    if (v_copy.size() % 2 == 0) {
+        return (v_copy.at(v_copy.size() / 2) + v_copy.at(v_copy.size() / 2 - 1)) / 2;
     }
-    if (current_count > mode_count) {
-        mode = current;
-        mode_count = current_count;
+    else {
+        return v_copy.at(v_copy.size() / 2);
     }
-    return mode;
 }
 
-int vectorMin(const Vector<int>& v) {
-    int min = v[0];
+int min_vector(const Vector<int>& v) {
+    int min = v.at(0);
     for (int i = 1; i < v.size(); i++) {
-        if (v[i] < min) {
-            min = v[i];
+        if (v.at(i) < min) {
+            min = v.at(i);
         }
     }
     return min;
 }
 
-int vectorMax(const Vector<int>& v) {
-    int max = v[0];
+int max_vector(const Vector<int>& v) {
+    int max = v.at(0);
     for (int i = 1; i < v.size(); i++) {
-        if (v[i] > max) {
-            max = v[i];
+        if (v.at(i) > max) {
+            max = v.at(i);
         }
     }
     return max;
 }
 
-void printStats(const Vector<int>& v) {
-    cout << "Vector: " << printVector(v) << endl;
-    cout << "Sum: " << vectorSum(v) << endl;
-    cout << "Average: " << vectorAverage(v) << endl;
-    cout << "Median: " << vectorMedian(v) << endl;
-    cout << "Mode: " << vectorMode(v) << endl;
-    cout << "Min: " << vectorMin(v) << endl;
-    cout << "Max: " << vectorMax(v) << endl;
-}
-
-void testVector() {
-    ofstream logFile("vector_test_log.txt", ios::app);
-    logFile << "Results of Tests on Vector Class:" << endl;
-    Vector<int> v;
-
-    // Test default constructor
-    if (v.size() == 0 && v.capacity() == 0) {
-        logFile << "Default constructor: PASS" << endl;
-    }
-    else {
-        logFile << "Default constructor: FAIL" << endl;
-    }
-
-    // Test push_back
-    v.push_back(1);
-    v.push_back(2);
-    v.push_back(3);
-    if (v.size() == 3 && v.capacity() == 4) {
-        logFile << "Push Back: PASS" << endl;
-    }
-    else {
-        logFile << "Push Back: FAIL" << endl;
-    }
-
-    // Test copy constructor
-    Vector<int> v2(v);
-    if (v2.size() == 3 && v2.capacity() == 4) {
-        logFile << "Copy constructor: PASS" << endl;
-    }
-    else {
-        logFile << "Copy constructor: FAIL" << endl;
-    }
-
-    // Test move constructor
-    Vector<int> v3(move(v));
-    if (v3.size() == 3 && v3.capacity() == 4) {
-        logFile << "Move constructor: PASS" << endl;
-    }
-    else {
-        logFile << "Move constructor: FAIL" << endl;
-    }
-
-    // Test front
-    if (v3.front() == 1) {
-        logFile << "Front: PASS" << endl;
-    }
-    else {
-        logFile << "Front: FAIL" << endl;
-    }
-
-    // Test back
-    if (v3.back() == 3) {
-        logFile << "Back: PASS" << endl;
-    }
-    else {
-        logFile << "Back: FAIL" << endl;
-    }
-
-    // Test at
-    if (v3.at(1) == 2) {
-        logFile << "At: PASS" << endl;
-    }
-    else {
-        logFile << "At: FAIL" << endl;
-    }
-
-    // Test operator[]
-    if (v3[1] == 2) {
-        logFile << "Operator[]: PASS" << endl;
-    }
-    else {
-        logFile << "Operator[]: FAIL" << endl;
-    }
-
-    // Test pop_back
-    v3.pop_back();
-    if (v3.size() == 2 && v3.capacity() == 4) {
-        logFile << "Pop Back: PASS" << endl;
-    }
-    else {
-        logFile << "Pop Back: FAIL" << endl;
-    }
-
-    // Test clear
-    v3.clear();
-    if (v3.size() == 0 && v3.capacity() == 4) {
-        logFile << "Clear: PASS" << endl;
-    }
-    else {
-        logFile << "Clear: FAIL" << endl;
-    }
-
-    // Test resize
-    v3.resize(10);
-    if (v3.size() == 10 && v3.capacity() == 10) {
-        logFile << "Resize: PASS" << endl;
-    }
-    else {
-        logFile << "Resize: FAIL" << endl;
-    }
-
-    // Test reserve
-    v3.reserve(20);
-    if (v3.size() == 10 && v3.capacity() == 20) {
-        logFile << "Reserve: PASS" << endl;
-    }
-    else {
-        logFile << "Reserve: FAIL" << endl;
-    }
-
-    // Test shrink_to_fit
-    v3.shrink_to_fit();
-    if (v3.size() == 10 && v3.capacity() == 10) {
-        logFile << "Shrink to Fit: PASS" << endl;
-    }
-    else {
-        logFile << "Shrink to Fit: FAIL" << endl;
-    }
-
-    // Test iterator
-    v3.begin();
-    v3.end();
-    if (v3.size() == 10 && v3.capacity() == 10) {
-        logFile << "Iterator: PASS" << endl;
-    }
-    else {
-        logFile << "Iterator: FAIL" << endl;
-    }
-
-    // Test Operators
-    Vector<int> v4;
-    v4.push_back(1);
-    v4.push_back(2);
-    v4.push_back(3);
-    Vector<int> v5;
-    v5.push_back(1);
-    v5.push_back(2);
-    v5.push_back(3);
-    if (v4 == v5) {
-        logFile << "Operator==: PASS" << endl;
-    }
-    else {
-        logFile << "Operator==: FAIL" << endl;
-    }
-
-    v4.push_back(4);
-    if (v4 != v5) {
-        logFile << "Operator!=: PASS" << endl;
-    }
-    else {
-        logFile << "Operator!=: FAIL" << endl;
-    }
-
-    if (v5 < v4) {
-        logFile << "Operator<: PASS" << endl;
-    }
-    else {
-        logFile << "Operator<: FAIL" << endl;
-    }
-
-    if (v5 <= v4) {
-        logFile << "Operator<=: PASS" << endl;
-    }
-    else {
-        logFile << "Operator<=: FAIL" << endl;
-    }
-
-    if (v4 > v5) {
-        logFile << "Operator>: PASS" << endl;
-    }
-    else {
-        logFile << "Operator>: FAIL" << endl;
-    }
-
-    if (v4 >= v5) {
-        logFile << "Operator>=: PASS" << endl;
-    }
-    else {
-        logFile << "Operator>=: FAIL" << endl;
-    }
-
-    v4.operator+=(v5);
-    if (v4.size() == 7 && v4.capacity() == 10) {
-        logFile << "Operator+=: PASS" << endl;
-    }
-    else {
-        logFile << "Operator+=: FAIL" << endl;
-    }
-
-    v4.operator-=(1);
-    if (v4.size() == 6 && v4.capacity() == 10) {
-        logFile << "Operator-=: PASS" << endl;
-    }
-    else {
-        logFile << "Operator-=: FAIL" << endl;
-    }
-}
-
-template <typename T>
-void userInput(Vector<T>& v) {
-    cout << "Enter a list of numbers, separated by spaces: ";
-    T input;
-    while (cin >> input) {
-        v.push_back(input);
-    }
-    if (typeid(T) == typeid(double)) {
-        printStats(v);
-    }
-    else {
-        cout << "Vector: " << printVector(v) << endl;
-    }
+string print_stats(const Vector<int>& v) {
+    string stats = "The stats for this vector are:\n";
+    stats += "Sum: " + to_string(sum_vector(v)) + "\n";
+    stats += "Average: " + to_string(avg_vector(v)) + "\n";
+    stats += "Median: " + to_string(median_vector(v)) + "\n";
+    stats += "Min: " + to_string(min_vector(v)) + "\n";
+    stats += "Max: " + to_string(max_vector(v)) + "\n";
+    return stats;
 }
 
 int main() {
-    Vector<int> v;
-    userInput(v);
-    return 0;
+    Vector<int> v1;
+    int input;
+    cout << "Enter a list of integers, followed by a non-integer character: ";
+    while (cin >> input && typeid(input) == typeid(int)) {
+        v1.push_back(input);
+    }
+    cout << "The vector you entered is: " << print_vector_int(v1) << endl;
+    cout << print_stats(v1) << endl;
+
+    Vector<double> v2;
+    double input2;
+    cout << "Enter a list of doubles, followed by a non-double character: ";
+    while (cin >> input2 && typeid(input2) == typeid(double)) {
+        v2.push_back(input2);
+    }
+
+    Vector<string> v3;
+    string input3;
+    cout << "Enter a list of strings, followed by a non-string character: ";
+    while (cin >> input3 && typeid(input3) == typeid(string)) {
+        v3.push_back(input3);
+    }
 }

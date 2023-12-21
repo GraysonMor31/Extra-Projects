@@ -1,5 +1,5 @@
-#ifndef VECTOR_H_INCLUDED;
-#define VECTOR_H_INCLUDED;
+#ifndef VECTOR_H_INCLUDED
+#define VECTOR_H_INCLUDED
 #include <iostream>
 #include <algorithm>
 #include <stdexcept>
@@ -15,268 +15,241 @@ private:
 
 public:
 
-    // Constructors
+    /* Member Funtions */
+
+    // Default Constructor
     Vector() : size_(0), capacity_(1), data_(new T[capacity_]) {}
-    Vector(int n) : size_(n), capacity_(n), data_(new T[capacity_]) {}
-    // Copy constructor
-    Vector(const Vector& v) : size_(v.size_), capacity_(v.capacity_), data_(new T[capacity_]) {
-        std::copy(v.data_, v.data_ + size_, data_);
-    }
-    // Move constructor
-    Vector(Vector&& v) : size_(v.size_), capacity_(v.capacity_), data_(v.data_) {
-        v.data_ = nullptr;
+    // Overloaded Constructor
+    Vector(size_t capacity) : size_(0), capacity_(capacity), data_(new T[capacity_]) {}
+    //Copy Constructor
+    Vector(const Vector& other): size_(other.size_), capacity_(other.capacity_), data_(new T[capacity_]) {
+        std::copy(other.data_, other.data_ + other.size_, data_);
     }
     // Destructor
-    ~Vector() {
-        delete[] data_;
+    ~Vector() { 
+        delete[] data_; 
+    }
+    // Assignment Operator
+    Vector& operator=(const Vector& other) {
+        if (this != &other) {
+            delete[] data_;
+            size_ = other.size_;
+            capacity_ = other.capacity_;
+            data_ = new T[capacity_];
+            std::copy(other.data_, other.data_ + other.size_, data_);
+        }
+        return *this;
     }
 
-    // Accessors 
+    // Iterators
+    T* begin() { 
+        return data_; 
+    }
+
+    T* end() { 
+        return data_ + size_; 
+    }
+
+    T* cbegin() const { 
+        return data_; 
+    }
+
+    T* cend() const { 
+        return data_ + size_; 
+    }
+
+    T* rbegin() { 
+        return data_ + size_ - 1; 
+    }
+
+    T* rend() { 
+        return data_ - 1; 
+    }
+
+    T* crbegin() const { 
+        return data_ + size_ - 1; 
+    }
+
+    T* crend() const { 
+        return data_ - 1; 
+    }
+
+    // Capacity
     int size() const { 
         return size_; 
+    }
+
+    int max_size() const { 
+        max = (pow(2, 32)/sizeof(T)) - 1;
+        return max;
     }
 
     int capacity() const { 
         return capacity_; 
     }
 
-    bool empty() const {
-        return size_ == 0;
+    bool empty() const { 
+        return size_ == 0; 
     }
 
-    T& front() const {
-        if (size_ == 0) {
-            throw std::out_of_range("Vector is empty");
-        } 
-        return data_[0]; 
-    }
-
-    T& front() {
-        if (size_ == 0) {
-            throw std::out_of_range("Vector is empty");
-        } 
-        return data_[0]; 
-    }
-
-    T& back() const {
-        if (size_ == 0) {
-            throw std::out_of_range("Vector is empty");
-        } 
-        return data_[size_ - 1]; 
-    }
-
-    T& back() {
-        if (size_ == 0) {
-            throw std::out_of_range("Vector is empty");
-        } 
-        return data_[size_ - 1]; 
-    }
-
-    T& at(int i) const {
-        if (i < 0 || i >= size_) {
-            throw std::out_of_range("Index out of range");
-        }
-        return data_[i];
-    }
-
-    T& operator[](int i) const {
-        return data_[i];
-    }
-
-    // Mutators
     void resize(int n) {
         if (n > capacity_) {
-            capacity_ = n;
-            T* new_data = new T[capacity_];
-            std::copy(data_, data_ + size_, new_data);
-            delete[] data_;
-            data_ = new_data;
+            reserve(n);
         }
         size_ = n;
     }
 
     void reserve(int n) {
         if (n > capacity_) {
-            capacity_ = n;
-            T* new_data = new T[capacity_];
-            std::copy(data_, data_ + size_, new_data);
+            T* temp = new T[n];
+            std::copy(data_, data_ + size_, temp);
             delete[] data_;
-            data_ = new_data;
+            data_ = temp;
+            capacity_ = n;
         }
     }
 
-    void push_back (const T& value) {
-        if (size_ == capacity_) {
-            capacity_ *= 2;
-            T* new_data = new T[capacity_];
-            std::copy(data_, data_ + size_, new_data);
+    void shrink_to_fit() {
+        if (size_ < capacity_) {
+            T* temp = new T[size_];
+            std::copy(data_, data_ + size_, temp);
             delete[] data_;
-            data_ = new_data;
+            data_ = temp;
+            capacity_ = size_;
         }
-        data_[size_] = value;
+    }
+
+    // Element Access
+    T& operator[](int i) const{ // Assumes user will not go out of bounds
+        return data_[i];
+    }
+
+    T& at(int i) const{
+        if (i < 0 || i >= size_) { // Assumes user will go out of bounds
+            throw std::out_of_range("Index out of range");
+        }
+        return data_[i];
+    }
+
+    T& front() { 
+        return data_[0]; 
+    }
+
+    T& back() { 
+        return data_[size_ - 1]; 
+    }
+
+    T* data() { 
+        return data_; 
+    }
+
+    // Modifiers
+    void assign(int n, const T& val) {
+        if (n > capacity_) {
+            reserve(n);
+        }
+        size_ = n;
+        std::fill(data_, data_ + size_, val);
+    }
+
+    void push_back(const T& val) {
+        if (size_ == capacity_) {
+            reserve(2 * capacity_);
+        }
+        data_[size_] = val;
         size_++;
     }
 
     void pop_back() {
-        if (size_ == 0) {
-            throw std::out_of_range("Vector is empty");
+        size_--;
+    }
+
+    void insert(int i, const T& val) {
+        if (size_ == capacity_) {
+            reserve(2 * capacity_);
+        }
+        for (int j = size_; j > i; j--) {
+            data_[j] = data_[j - 1];
+        }
+        data_[i] = val;
+        size_++;
+    }
+
+    void erase(int i) {
+        for (int j = i; j < size_ - 1; j++) {
+            data_[j] = data_[j + 1];
         }
         size_--;
     }
 
-    void shrink_to_fit() {
-        capacity_ = size_;
-        T* new_data = new T[capacity_];
-        std::copy(data_, data_ + size_, new_data);
-        delete[] data_;
-        data_ = new_data;
+    void swap(Vector& other) {
+        std::swap(size_, other.size_);
+        std::swap(capacity_, other.capacity_);
+        std::swap(data_, other.data_);
     }
 
     void clear() {
         size_ = 0;
     }
 
-    void swap(Vector& v) {
-        std::swap(size_, v.size_);
-        std::swap(capacity_, v.capacity_);
-        std::swap(data_, v.data_);
+    void emplace(int i, const T& val) {
+        if (size_ == capacity_) {
+            reserve(2 * capacity_);
+        }
+        for (int j = size_; j > i; j--) {
+            data_[j] = data_[j - 1];
+        }
+        data_[i] = val;
+        size_++;
+    }
+
+    void emplace_back(const T& val) {
+        if (size_ == capacity_) {
+            reserve(2 * capacity_);
+        }
+        data_[size_] = val;
+        size_++;
     }
 
     // Operators
-    Vector& operator=(const Vector& v) {
-        if (this != &v) {
-            size_ = v.size_;
-            capacity_ = v.capacity_;
-            delete[] data_;
-            data_ = new T[capacity_];
-            std::copy(v.data_, v.data_ + size_, data_);
-        }
-        return *this;
-    }
-
-    Vector& operator=(Vector&& v) {
-        if (this != &v) {
-            size_ = v.size_;
-            capacity_ = v.capacity_;
-            delete[] data_;
-            data_ = v.data_;
-            v.data_ = nullptr;
-        }
-        return *this;
-    }
-
-    Vector& operator+=(const Vector& v) {
-        if (size_ + v.size_ > capacity_) {
-            capacity_ = size_ + v.size_;
-            T* new_data = new T[capacity_];
-            std::copy(data_, data_ + size_, new_data);
-            delete[] data_;
-            data_ = new_data;
-        }
-        std::copy(v.data_, v.data_ + v.size_, data_ + size_);
-        size_ += v.size_;
-        return *this;
-    }
-
-    Vector& operator+=(const T& value) {
-    push_back(value);
-    return *this;
-    }
-
-    Vector operator+(const Vector& v) const {
-        Vector result(*this);
-        result operator+= v;
-        return result;
-    }
-
-    Vector operator+(const T& value) const {
-        Vector result(*this);
-        result += value;
-        return result;
-    }
-
-    Vector& operator-=(const Vector& v) {
-        if (n > size_) {
-            throw std::out_of_range("Index out of range");
-        }
-        size_ -= n;
-        return *this;
-    }
-
-    Vector& operator-=(const T& value) {
-        pop_back();
-        return *this;
-    }
-
-    Vector operator-(const Vector& v) const {
-        Vector result(*this);
-        result -= n;
-        return result;
-    }
-
-    Vector operator-(const T& value) const {
-        Vector result(*this);
-        result -= value;
-        return result;
-    }
-
-    // Comparison operators
-    bool operator==(const Vector& v) const {
-        if (size_ != v.size_) {
+    bool operator==(const Vector& rhs) const {
+        if (size_ != rhs.size_) {
             return false;
         }
         for (int i = 0; i < size_; i++) {
-            if (data_[i] != v.data_[i]) {
+            if (data_[i] != rhs.data_[i]) {
                 return false;
             }
         }
         return true;
     }
 
-    bool operator!=(const Vector& v) const {
-        return !(*this == v);
+    bool operator!=(const Vector& rhs) const {
+        return !(*this == rhs);
     }
 
-    bool operator<(const Vector& v) const {
-        int min_size = std::min(size_, v.size_);
-        for (int i = 0; i < min_size; i++) {
-            if (data_[i] < v.data_[i]) {
+    bool operator<(const Vector& rhs) const {
+        for (int i = 0; i < size_; i++) {
+            if (data_[i] < rhs.data_[i]) {
                 return true;
             }
-            else if (data_[i] > v.data_[i]) {
+            else if (data_[i] > rhs.data_[i]) {
                 return false;
             }
         }
-        return size_ < v.size_;
+        return false;
     }
 
-    bool operator<=(const Vector& v) const {
-        return *this < v || *this == v;
+    bool operator<=(const Vector& rhs) const {
+        return (*this < rhs || *this == rhs);
     }
 
-    bool operator>(const Vector& v) const {
-        return !(*this <= v);
+    bool operator>(const Vector& rhs) const {
+        return !(*this <= rhs);
     }
 
-    bool operator>=(const Vector& v) const {
-        return !(*this < v);
-    }
-
-    // Iterators
-    T* begin() const {
-        return data_;
-    }
-
-    T* begin () {
-        return data_;
-    }
-
-    T* end() const {
-        return data_ + size_;
-    }
-
-    T* end() {
-        return data_ + size_;
+    bool operator>=(const Vector& rhs) const {
+        return !(*this < rhs);
     }
 };
 #endif 
