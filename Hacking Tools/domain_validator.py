@@ -7,6 +7,7 @@ def is_registered(domain_name):
     """
     try:
         w = whois.whois(domain_name)
+        print(w)
     except Exception:
         return False
     else:
