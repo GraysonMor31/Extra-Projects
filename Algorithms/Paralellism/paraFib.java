@@ -2,7 +2,7 @@ package Algorithms.Paralellism;
 
 import java.util.Scanner;
 
-public class paraFib {
+class paraFib {
 
     public int input(int n) {
         Scanner scanner = new Scanner(System.in);

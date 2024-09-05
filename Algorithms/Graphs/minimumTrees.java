@@ -2,7 +2,7 @@ package Algorithms.Graphs;
 
 import java.util.*;
 
-public class MinimumTrees {
+class MinimumTrees {
     private static final int V = 9;
 
     class Edge implements Comparable<Edge> {

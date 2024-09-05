@@ -2,7 +2,7 @@ package Algorithms.Graphs;
 
 import java.util.*;
 
-public class Traversals<T> {
+class Traversals<T> {
     private Map<T, List<T>> adjVertices;
 
     public Traversals() {
