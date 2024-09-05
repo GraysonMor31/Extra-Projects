@@ -44,7 +44,7 @@ class paraFib {
         int n = 0;
         n = pf.input(n);
         System.out.println("Calculating Fibonacci series for " + n + " terms...");
-        for (int i = 0; i <=10; i++) {
+        for (int i = 0; i <=n; i++) {
             System.out.println(pf.fib(i));
         }
     }
