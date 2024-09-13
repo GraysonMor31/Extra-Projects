@@ -1,0 +1,12 @@
+{
+    "domain_info": null,
+    "dns_records": {
+        "A": [],
+        "AAAA": [],
+        "MX": [],
+        "NS": [],
+        "TXT": [],
+        "SOA": []
+    },
+    "subdomains": []
+}
